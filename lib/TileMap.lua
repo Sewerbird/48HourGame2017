@@ -1,3 +1,5 @@
+local TileCell = require('lib/TileCell')
+
 local TileMap = {
 }
 TileMap.__index = TileMap 
@@ -13,7 +15,7 @@ TileMap.new = function (init)
   for i = 1, map_height do
     local row = {}
     for j = 1, map_width do
-      table.insert(row,0)
+      table.insert(row,TileCell:new(j,i))
     end
     table.insert(self.map, row)
   end
@@ -21,12 +23,18 @@ TileMap.new = function (init)
   return self
 end
 
+function TileMap:add(obj, loc)
+  obj.loc = self.loc
+  table.insert(self.map[loc.y][loc.x].entities, obj)
+end
+
 function TileMap:_print()
   local result = ""
   for i = 1, #self.map do
     local row = self.map[i]
     for j = 1, #row do
-      result = result .. row[j]
+      local cell = row[j]
+      result = result .. cell:identifier()
     end
     result = result .. "\n"
   end

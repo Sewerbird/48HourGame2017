@@ -1,3 +1,5 @@
+inspect = require('inspect')
+
 local TileMap = require('lib/TileMap')
 local TilePlayer = require('lib/TilePlayer')
 
@@ -9,6 +11,11 @@ local GS = {}
 function love.load()
   love.window.title = "48 Hour Game"
   GS.my_map = TileMap:new()
+  GS.my_player = TilePlayer:new()
+
+
+  --Load
+  GS.my_map:add(GS.my_player,GS.my_player.loc)
 end
 
 function love.keypressed(key)
