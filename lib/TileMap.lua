@@ -14,7 +14,11 @@ TileMap.new = function (init)
   for i = 1, self.map_height do
     local row = {}
     for j = 1, self.map_width do
-      table.insert(row,TileCell:new(j,i))
+      if math.random() > 0.8 then
+        table.insert(row,TileCell:new(j,i,'wall',false))
+      else --grass
+        table.insert(row,TileCell:new(j,i,'grass',true))
+      end
     end
     table.insert(self.map, row)
   end
@@ -23,8 +27,18 @@ TileMap.new = function (init)
 end
 
 function TileMap:add(obj, loc)
-  obj.loc = self.loc
+  obj.loc = loc
   table.insert(self.map[loc.y][loc.x].entities, obj)
+end
+
+function TileMap:moveRelEntity(locA,dx,dy)
+  local tgt_loc = self.map[locA.y+dy] and self.map[locA.y+dy][locA.x+dx]
+  if tgt_loc and tgt_loc.passable then
+    local to_move = table.remove(self.map[locA.y][locA.x].entities,1)
+    self:add(to_move,{ y = locA.y + dy, x = locA.x + dx})
+  else
+    return false
+  end
 end
 
 function TileMap:draw()

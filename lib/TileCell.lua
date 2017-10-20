@@ -2,12 +2,13 @@ local TileCell = {
 }
 TileCell.__index = TileCell 
 
-TileCell.new = function (self,x,y)
+TileCell.new = function (self,x,y,terrain,passable)
   local self = setmetatable({}, TileCell)
   self.loc = { x = x, y = y }
   self.entities = {}
   self.identifier = "."
-  self.terrain = "grass"
+  self.terrain = terrain or "grass"
+  self.passable = passable ~= nil and passable or false
   return self
 end
 

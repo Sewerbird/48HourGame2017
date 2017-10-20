@@ -5,7 +5,8 @@ TilePlayer.__index = TilePlayer
 TilePlayer.new = function (init)
   local self = setmetatable({}, TilePlayer)
 
-  self.loc = { x = 3, y = 3 }
+  self.loc = { map = nil, x = 3, y = 3 }
+  self.idx = "player" 
   self.identifier = "@"
   self.sprite = "player"
 
