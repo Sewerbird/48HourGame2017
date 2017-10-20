@@ -10,8 +10,8 @@ GAME_PAUSED = false
 
 
 function love.load()
-  love.window.setMode(650, 650) --set the window dimensions to 650 by 650
-  love.window.setTitle = "48 Hour Game"
+  love.window.setMode(1300, 650) --set the window dimensions to 650 by 650
+  love.window.setTitle("48 Hour Game")
   GS.input = {} --input queue
 
   GS.my_map = TileMap:new()
@@ -37,16 +37,18 @@ function love.keypressed(key, scancode)
     GAME_PAUSED = not GAME_PAUSED
   end
 
-  if key == 'up' then
-    table.insert(GS.input,"p_mv_up")
-  elseif key == 'down' then
-    table.insert(GS.input,"p_mv_down")
-  elseif key == 'left' then
-    table.insert(GS.input,"p_mv_left")
-  elseif key == 'right' then
-    table.insert(GS.input,"p_mv_right")
-  end
+    if key == 'up' then
+      table.insert(GS.input,"p_mv_up")
+    elseif key == 'down' then
+      table.insert(GS.input,"p_mv_down")
+    elseif key == 'left' then
+      table.insert(GS.input,"p_mv_left")
+    elseif key == 'right' then
+      table.insert(GS.input,"p_mv_right")
+    end
+
 end
+
 
 function love.update(dt)
   if not GAME_RUNNING then 
@@ -56,6 +58,7 @@ function love.update(dt)
     dt = 0
   end
 
+  --Game Update
   if #GS.input then
     for i = 1, #GS.input do
       local cmd = GS.input[i]
@@ -76,10 +79,26 @@ end
 function love.draw()
   love.graphics.push()
   --Worldspace
-  love.graphics.translate(GS.my_player.loc.x * -100 + love.graphics:getWidth()/2, GS.my_player.loc.y * -100 + love.graphics:getHeight()/2)
+  local translate_x = GS.my_player.loc.x * 100
+  local translate_y = GS.my_player.loc.y * 100
+  while translate_y < love.graphics:getHeight()/2 do
+    translate_y = translate_y + 100
+  end
+  while translate_y + love.graphics.getHeight()/2 > (GS.my_map.map_height +1 ) * 100 do
+    translate_y = translate_y - 100
+  end
+  while translate_x < love.graphics:getWidth()/2 do
+    translate_x = translate_x + 100
+  end
+  while translate_x + love.graphics.getWidth()/2 > (GS.my_map.map_width + 1) * 100 do
+    translate_x = translate_x - 100
+  end
+  love.graphics.translate(love.graphics:getWidth()/2-translate_x, love.graphics:getHeight()/2-translate_y)
   GS.my_map:draw()
   love.graphics.pop()
   --Screenspace
   love.graphics.print((GAME_PAUSED and "Pause" or "Unpaused"), 5,5)
+  love.graphics.print("TRANSLATE X is " .. translate_x, 5, 20)
+  love.graphics.print("TRANSLATE Y is " .. translate_y, 5, 40)
 end
 

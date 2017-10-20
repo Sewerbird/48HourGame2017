@@ -7,14 +7,14 @@ TileMap.__index = TileMap
 TileMap.new = function (init)
   local self = setmetatable({}, TileMap)
 
-  self.map_width = init.width or 10
-  self.map_height = init.height or 10
+  self.map_width = init.width or 40
+  self.map_height = init.height or 20
   self.map = {}
 
   for i = 1, self.map_height do
     local row = {}
     for j = 1, self.map_width do
-      if math.random() > 0.8 then
+      if i == 1 or i == self.map_height or j == 1 or j == self.map_width or  math.random() > 0.8 then
         table.insert(row,TileCell:new(j,i,'wall',false))
       else --grass
         table.insert(row,TileCell:new(j,i,'grass',true))
@@ -32,10 +32,15 @@ function TileMap:add(obj, loc)
 end
 
 function TileMap:moveRelEntity(locA,dx,dy)
-  local tgt_loc = self.map[locA.y+dy] and self.map[locA.y+dy][locA.x+dx]
-  if tgt_loc and tgt_loc.passable then
+  return self:moveEntity(locA, { y = locA.y + dy, x = locA.x + dx })
+end
+
+function TileMap:moveEntity(locA,locB)
+  local src_loc = self.map[locA.y][locA.x]
+  local tgt_loc = self.map[locB.y][locB.x]
+  if src_loc and tgt_loc and tgt_loc.passable then
     local to_move = table.remove(self.map[locA.y][locA.x].entities,1)
-    self:add(to_move,{ y = locA.y + dy, x = locA.x + dx})
+    self:add(to_move, locB)
   else
     return false
   end
@@ -47,19 +52,6 @@ function TileMap:draw()
       self.map[i][j]:draw()
     end
   end
-end
-
-function TileMap:_print()
-  local result = ""
-  for i = 1, #self.map do
-    local row = self.map[i]
-    for j = 1, #row do
-      local cell = row[j]
-      result = result .. cell:identifier()
-    end
-    result = result .. "\n"
-  end
-  return result
 end
 
 return TileMap

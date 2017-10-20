@@ -8,10 +8,5 @@ MYCLASS.new = function (init)
   return self
 end
 
-function MYCLASS:_print()
-  local result = ""
-  return result
-end
-
 return MYCLASS
 

@@ -7,7 +7,6 @@ TilePlayer.new = function (init)
 
   self.loc = { map = nil, x = 3, y = 3 }
   self.idx = "player" 
-  self.identifier = "@"
   self.sprite = "player"
 
   return self
@@ -17,11 +16,6 @@ function TilePlayer:draw(x,y)
   love.graphics.push()
   love.graphics.draw(Assets.img.entity_sheet,Assets.sprites[self.sprite],0,0)
   love.graphics.pop()
-end
-
-function TilePlayer:_print()
-  local result = ""
-  return result
 end
 
 return TilePlayer
