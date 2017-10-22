@@ -9,6 +9,7 @@ local TileEntity = require('lib/TileEntity')
 local SceneStack = require('lib/SceneStack')
 local MapScene = require('lib/MapScene')
 local BattleScene = require('lib/BattleScene')
+local TitleScene = require('lib/TitleScene')
 
 function love.load()
   love.window.setMode(1280, 720) --set the window dimensions to 650 by 650
@@ -21,8 +22,9 @@ function love.load()
 
   GAME_RUNNING = true
   GAME_PAUSED = false
+  GAME_VIEW_IS_TITLE = true
   GAME_VIEW_IS_BATTLE = false
-  GAME_VIEW_IS_MAP = true
+  GAME_VIEW_IS_MAP = false
   GAME_VIEW_IS_DEATH = false
 
   --Asset Loading
@@ -81,7 +83,6 @@ function love.load()
     TileEntity:new({ name = "torch", orient = "front", sprite = "torch", fuel = 30, action = "p_scare", consumable = true })
   }
   GS.my_player.inventory.selected = 1
-  print("INVENTORY is " .. inspect(GS.my_player.inventory))
   GS.my_badguy = TileEntity:new()
   GS.my_badguy.name = "Rabid Bear"
   GS.my_badguy.sprite = "bear"
@@ -94,7 +95,7 @@ function love.load()
   GS.my_map:add(GS.my_player,GS.my_player.loc)
 
   --Load UI
-  Scenes:push(MapScene:new())
+  Scenes:push(TitleScene:new())
 end
 
 function love.keypressed(key, scancode)
@@ -121,19 +122,23 @@ function love.keypressed(key, scancode)
   if GAME_VIEW_IS_MAP then
     if GS.input:isEmpty() then
       if key == 'up' then
-        GS.input:addCommand("p_mv_up")
+        GS.input:addCommand("p_mv_up",nil,0.2)
       elseif key == 'down' then
-        GS.input:addCommand("p_mv_down")
+        GS.input:addCommand("p_mv_down",nil,0.2)
       elseif key == 'left' then
-        GS.input:addCommand("p_mv_left")
+        GS.input:addCommand("p_mv_left",nil,0.2)
       elseif key == 'right' then
-        GS.input:addCommand("p_mv_right")
+        GS.input:addCommand("p_mv_right",nil,0.2)
       end
     end
   end
 
   if GAME_VIEW_IS_DEATH then
     GS.input:addCommand("GAME_reload")
+  end
+
+  if GAME_VIEW_IS_TITLE then
+    GS.input:addCommand("GAME_start")
   end
 
 end
@@ -155,6 +160,6 @@ function love.draw()
   Scenes:draw()
   love.graphics.pop()
   --Screenspace
-  love.graphics.print(GS.input:status_string(),5,5)
+  --love.graphics.print(GS.input:status_string(),5,5)
 end
 

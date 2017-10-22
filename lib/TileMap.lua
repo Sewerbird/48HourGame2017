@@ -80,7 +80,7 @@ function TileMap:moveEntity(locA,locB)
       self:add(to_move, locB)
       return true
     else --Something is there and we bumped into it: interact
-      GS.input:addCommand("p_interact",locB)
+      GS.input:addCommand("p_interact",locB,0.1)
     end
   else
     return false

@@ -28,9 +28,10 @@ function EventQueue:update(dt)
     local cmd = self.queue[1]
     if not self.queue[1].processed then
       self.queue[1].processed = true
-      print("Processing command " .. self.queue[1].tag .. " with arg " .. inspect(self.queue[1].arg))
+      print("Processing command " .. self.queue[1].tag .. " with arg " .. inspect(self.queue[1]))
       if self.queue[1].tag == 'GAME_pop_battle' and GAME_VIEW_IS_BATTLE then
         GS.input:clear()
+        GAME_VIEW_IS_TITLE = false
         GAME_VIEW_IS_BATTLE = false
         GAME_VIEW_IS_MAP = true
         GAME_VIEW_IS_DEATH = false
@@ -38,21 +39,31 @@ function EventQueue:update(dt)
         break
       elseif self.queue[1].tag == 'GAME_push_battle' and GAME_VIEW_IS_MAP then
         GS.input:clear()
+        GAME_VIEW_IS_TITLE = false
         GAME_VIEW_IS_BATTLE = true
         GAME_VIEW_IS_MAP = false
         GAME_VIEW_IS_DEATH = false
         Scenes:push(BattleScene:new())
         break
+      elseif self.queue[1].tag == 'GAME_start' then
+        GS.input:clear()
+        GAME_VIEW_IS_BATTLE = false
+        GAME_VIEW_IS_MAP = true
+        GAME_VIEW_IS_DEATH = false
+        GAME_VIEW_IS_TITLE = false
+        Scenes:push(MapScene:new())
+        break
       elseif self.queue[1].tag == 'GAME_reload' then
+        GAME_VIEW_IS_BATTLE = false
+        GAME_VIEW_IS_MAP = false
+        GAME_VIEW_IS_DEATH = false
+        GAME_VIEW_IS_TITLE = true
         GS.input:clear()
         love.load()
-        --[[
-        Scenes:clear()
-        Scenes:push(MapScene:new())
-        ]]
         break
       elseif cmd.tag == 'GAME_lose' then
         GS.input:clear()
+        GAME_VIEW_IS_TITLE = false
         GAME_VIEW_IS_BATTLE = false
         GAME_VIEW_IS_MAP = false
         GAME_VIEW_IS_DEATH = true
@@ -92,8 +103,10 @@ function EventQueue:clear()
   self.queue = {}
 end
 
-function EventQueue:addCommand(tag, arg)
-  table.insert(self.queue,{tag = tag, arg = arg, duration = 0.8,original_duration = 0.8, update = function(dt) end})
+function EventQueue:addCommand(tag, arg, duration)
+  print("Adding command " .. tag .. inspect(arg))
+  local dur = duration or 0.9
+  table.insert(self.queue,{tag = tag, arg = arg, duration = dur, original_duration = dur})
 end
 
 return EventQueue

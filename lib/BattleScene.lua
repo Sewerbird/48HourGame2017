@@ -47,7 +47,7 @@ function BattleScene:receiveCommandBegin(command)
     elseif cmd == 'p_rifle_inventory_left' then
       self.selected.inventory.selected = self.selected.inventory.selected == 1 and #self.selected.inventory or self.selected.inventory.selected - 1
     elseif cmd == 'p_use_selected_item' then
-      GS.input:addCommand(self.selected.inventory[self.selected.inventory.selected].action,self.selected.inventory[self.selected.inventory.selected])
+      GS.input:addCommand(self.selected.inventory[self.selected.inventory.selected].action,self.selected.inventory[self.selected.inventory.selected],1)
       if self.selected.inventory[self.selected.inventory.selected].consumable then
         table.remove(self.selected.inventory,self.selected.inventory.selected)
         self.selected.inventory.selected = math.min(self.selected.inventory.selected, #self.selected.inventory)
@@ -55,7 +55,6 @@ function BattleScene:receiveCommandBegin(command)
     end
   else
     if cmd == 'm_run_away' then
-      self:escapeBattle()
     elseif cmd == 'm_attack' then
       self:attackTargetWithSelected(self.enemies[1],self.allies[1],{ name= "claws", damage= 30 })
     elseif cmd == 'm_end_turn' then
@@ -68,6 +67,13 @@ function BattleScene:receiveCommandUpdate(command,dt)
 end
 
 function BattleScene:receiveCommandFinish(command)
+  if cmd == 'm_run_away' then
+    self:escapeBattle()
+  elseif cmd == 'm_attack' then
+    self:attackTargetWithSelected(self.enemies[1],self.allies[1],{ name= "claws", damage= 30 })
+  elseif cmd == 'm_end_turn' then
+    self:endTurn()
+  end
 end
 
 function BattleScene:startBattle()
@@ -117,10 +123,10 @@ end
 function BattleScene:doEnemyTurn()
   local monster = self.enemies[1]
   if monster.health < monster.max_health / 2 and math.random() > 0.9 then
-    GS.input:addCommand("m_run_away")
+    GS.input:addCommand("m_run_away",{desc = "The bear flees!"},1.2)
     GS.input:addCommand("m_end_turn")
   else
-    GS.input:addCommand("m_attack")
+    GS.input:addCommand("m_attack",{desc = "The bear slashes at you"},1.0)
     GS.input:addCommand("m_end_turn")
   end
 end
@@ -150,13 +156,21 @@ function BattleScene:draw()
     if self.selected then
       love.graphics.setColor(0,0,0)
       --Draw Selected Guy Stats
-      love.graphics.print(self.selected.name .. "\nHealth: " .. self.selected.health .. "\nDamage: " .. self.selected.damage, self.ui_left, self.ui_level-150)
+      love.graphics.print(self.selected.name, self.ui_left, self.ui_level-350)
+      love.graphics.setColor(100,100,200)
+      love.graphics.rectangle('fill',self.ui_left-5,self.ui_level-305,310,35)
+      love.graphics.setColor(0,0,255)
+      love.graphics.rectangle('fill',self.ui_left,self.ui_level-300,300 * (self.selected.health/self.selected.max_health),25)
       love.graphics.setColor(255,255,255)
     end
     if self.target_guy then
       love.graphics.setColor(0,0,0)
       --Draw Selected Guy Stats
-      love.graphics.print(self.target_guy.name .. "\nHealth: " .. self.target_guy.health .. "\nDamage: " .. self.target_guy.damage, self.ui_right, self.ui_level-150)
+      love.graphics.print(self.target_guy.name, self.ui_right, self.ui_level-350)
+      love.graphics.setColor(200,100,100)
+      love.graphics.rectangle('fill',self.ui_right-5,self.ui_level-305,310,35)
+      love.graphics.setColor(255,0,0)
+      love.graphics.rectangle('fill',self.ui_right,self.ui_level-300,300 * (self.target_guy.health/self.target_guy.max_health),25)
       love.graphics.setColor(255,255,255)
     end
     --Draw Inventory
