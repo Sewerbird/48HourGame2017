@@ -7,7 +7,7 @@ TileEntity.new = function (self, init)
 
   --Defaults
   init = init or {}
-  self.loc = { map = nil, x = 2, y = 2 }
+  self.loc = { map = nil, x = 8, y = 8 }
   self.off = { x = 0, y = 0}
   self.idx = "player" 
   self.sprite = "player"

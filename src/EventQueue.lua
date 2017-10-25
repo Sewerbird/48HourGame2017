@@ -1,6 +1,6 @@
-local BattleScene = require('lib/BattleScene')
-local DeathScene = require('lib/DeathScene')
-local MapScene = require('lib/MapScene')
+local BattleScene = require('src/BattleScene')
+local DeathScene = require('src/DeathScene')
+local MapScene = require('src/MapScene')
 
 local EventQueue = {
 }
@@ -29,44 +29,24 @@ function EventQueue:update(dt)
     if not self.queue[1].processed then
       self.queue[1].processed = true
       print("Processing command " .. self.queue[1].tag .. " with arg " .. inspect(self.queue[1]))
-      if self.queue[1].tag == 'GAME_pop_battle' and GAME_VIEW_IS_BATTLE then
+      if self.queue[1].tag == 'GAME_pop_battle' and (Scenes:current().scene_type == 'GAME_VIEW_BATTLE') then
         GS.input:clear()
-        GAME_VIEW_IS_TITLE = false
-        GAME_VIEW_IS_BATTLE = false
-        GAME_VIEW_IS_MAP = true
-        GAME_VIEW_IS_DEATH = false
         Scenes:pop()
         break
-      elseif self.queue[1].tag == 'GAME_push_battle' and GAME_VIEW_IS_MAP then
+      elseif self.queue[1].tag == 'GAME_push_battle' and (Scenes:current().scene_type == 'GAME_VIEW_MAP') then
         GS.input:clear()
-        GAME_VIEW_IS_TITLE = false
-        GAME_VIEW_IS_BATTLE = true
-        GAME_VIEW_IS_MAP = false
-        GAME_VIEW_IS_DEATH = false
         Scenes:push(BattleScene:new())
         break
       elseif self.queue[1].tag == 'GAME_start' then
         GS.input:clear()
-        GAME_VIEW_IS_BATTLE = false
-        GAME_VIEW_IS_MAP = true
-        GAME_VIEW_IS_DEATH = false
-        GAME_VIEW_IS_TITLE = false
         Scenes:push(MapScene:new())
         break
       elseif self.queue[1].tag == 'GAME_reload' then
-        GAME_VIEW_IS_BATTLE = false
-        GAME_VIEW_IS_MAP = false
-        GAME_VIEW_IS_DEATH = false
-        GAME_VIEW_IS_TITLE = true
         GS.input:clear()
         love.load()
         break
       elseif cmd.tag == 'GAME_lose' then
         GS.input:clear()
-        GAME_VIEW_IS_TITLE = false
-        GAME_VIEW_IS_BATTLE = false
-        GAME_VIEW_IS_MAP = false
-        GAME_VIEW_IS_DEATH = true
         Scenes:push(DeathScene:new())
         break
       else

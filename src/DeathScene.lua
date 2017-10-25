@@ -5,7 +5,13 @@ DeathScene.__index = DeathScene
 DeathScene.new = function (init)
   local self = setmetatable({}, DeathScene)
 
+  self.scene_type = 'GAME_VIEW_DEATH'
+  
   return self
+end
+
+function DeathScene:keyEvent(k)
+  GS.input:addCommand("GAME_reload")
 end
 
 function DeathScene:receiveCommandBegin(command)

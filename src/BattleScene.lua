@@ -5,6 +5,8 @@ BattleScene.__index = BattleScene
 BattleScene.new = function ()
   local self = setmetatable({}, BattleScene)
 
+  self.scene_type='GAME_VIEW_BATTLE'
+
   self.ground_level = 400
   self.ui_level = 450
   self.ui_left = 90
@@ -25,6 +27,18 @@ BattleScene.new = function ()
   self.selected_item = nil
 
   return self
+end
+
+function BattleScene:keyEvent(key)
+  if key == 'a' then
+    GS.input:addCommand("p_use_selected_item")
+  elseif key == 'enter' then
+    GS.input:addCommand("p_end_turn")
+  elseif key == 'left' then
+    GS.input:addCommand("p_rifle_inventory_left")
+  elseif key == 'right' then
+    GS.input:addCommand("p_rifle_inventory_right")
+  end
 end
 
 function BattleScene:receiveCommandBegin(command)
@@ -176,7 +190,7 @@ function BattleScene:draw()
     --Draw Inventory
     for i = 1, #self.selected.inventory do
       love.graphics.push()
-      love.graphics.translate(50 + i*100,self.ui_level)
+      love.graphics.translate(100 + 50 + math.mod(i-1,11)*100,self.ui_level + 100 * math.floor((i-1)/11))
       if self.selected.inventory.selected == i then 
         love.graphics.draw(Assets.img.entity_sheet,Assets.sprites.reticule.front,0,0,0,1,1,50)
       end
