@@ -26,7 +26,7 @@ function TitleScene:receiveCommandFinish(command)
 end
 
 function TitleScene:draw()
-  love.graphics.setFont(self.font)
+  --love.graphics.setFont(self.font)
   love.graphics.printf("You enter a dark forest full of rabid bears..", 0, love.graphics.getHeight()/2,love.graphics.getWidth(),'center')
 end
 

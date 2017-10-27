@@ -33,6 +33,12 @@ function love.keypressed(key, scancode)
   end
 end
 
+S = ""
+function love.mousepressed(x,y)
+  S = "clicked on " .. x .. " , " .. y
+  print(s)
+end
+
 
 function love.update(dt)
   if not GAME_RUNNING then return end
@@ -45,5 +51,6 @@ function love.draw()
   love.graphics.push()
   Scenes:draw()
   love.graphics.pop()
+  love.graphics.print(S,20,20)
 end
 

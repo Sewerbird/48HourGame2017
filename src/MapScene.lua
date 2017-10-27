@@ -120,13 +120,14 @@ function MapScene:triggerBattle()
   GS.input:addCommand("GAME_push_battle")
 end
 
+function MapScene:screenToTile(x,y)
+end
+
 function MapScene:draw()
   --Worldspace
   local translate_x = GS.my_player.loc.x * 100 + GS.my_player.off.x
   local translate_y = GS.my_player.loc.y * 25 + GS.my_player.off.y
-  translate_x = 8 * 100 + GS.my_player.off.x
-   translate_y = 8 * 25 + GS.my_player.off.x
-  love.graphics.translate(love.graphics:getWidth()/2-translate_x, love.graphics:getHeight()/2-translate_y)
+  --love.graphics.translate(love.graphics:getWidth()/2-translate_x, love.graphics:getHeight()/2-translate_y)
   GS.my_map:draw()
 end
 

@@ -12,16 +12,18 @@ local Loader = function(GS)
   for i = 1, GS.my_map.map_height do
     local row = {}
     for j = 1, GS.my_map.map_width do
-      if false and (i == 1 or i == GS.my_map.map_height or j == 1 or j == GS.my_map.map_width or  math.random() > 0.8) then
-        --table.insert(row,TileCell:new(j,i,'wall',false))
+      if false and (i == 1 or i == GS.my_map.map_height or j == 1 or j == GS.my_map.map_width) then
+        table.insert(row,TileCell:new(j,i,'grass',true,3))
+      elseif false and math.random() > 0.9 then
+        table.insert(row,TileCell:new(j,i,'grass',true,1))
       else --grass
-        local grass = TileCell:new(j,i,'grass',true)
+        local grass = TileCell:new(j,i,'grass',true,0)
         if math.random() > 0.99 and not merchant_placed then
           merchant_placed = true
           local merchant = TileEntity:new()
           merchant.interact = function()
           end
-          merchant.loc = {x = j, y = i}
+          merchant.loc = grass.loc
           merchant.sprite = "merchant"
           merchant.orient = "front"
           merchant.idx = "Merchant"
@@ -38,7 +40,7 @@ local Loader = function(GS)
               self.ripe = false
             end
           end
-          bush.loc = {x = j, y = i}
+          bush.loc = grass.loc
           bush.sprite = "berry"
           bush.orient = "ripe"
           bush.idx = "Berry"

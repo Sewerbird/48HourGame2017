@@ -68,7 +68,9 @@ end
 function TileMap:moveEntity(locA,locB)
   local src_loc = self.map[locA.y][locA.x]
   local tgt_loc = self.map[locB.y][locB.x]
-  if src_loc and tgt_loc and tgt_loc.passable then
+  print("SRC_LOC is " .. inspect(src_loc))
+  print("TGT_LOC is " .. inspect(tgt_loc))
+  if src_loc and tgt_loc and math.abs(src_loc.loc.z - tgt_loc.loc.z) <= 1 then
     if #tgt_loc.entities == 0 then
       local to_move = table.remove(self.map[locA.y][locA.x].entities,1)
       self:add(to_move, locB)
@@ -86,20 +88,20 @@ function TileMap:draw()
   for i = 1, self.map_height do
     for j = 1, self.map_width do
       self.map[i][j]:draw()
+      love.graphics.push()
+      local cell = self.map[i][j]
+      love.graphics.translate(cell.loc.x * cell.cell_width - cell.cell_width/2 + ((math.mod(cell.loc.y,2)==0) and 50 or 0), cell.loc.y * cell.cell_height/2 - 100 - (25 * cell.loc.z + 1))
+      love.graphics.translate(cell.cell_width/2,0)
+      for i = 1, #cell.entities do
+        cell.entities[i]:draw()
+      end
+      love.graphics.pop()
     end
   end
   --Draw Entities
   love.graphics.push()
   for i = 1, self.map_height do
     for j = 1, self.map_width do
-      love.graphics.push()
-      local cell = self.map[i][j]
-      love.graphics.translate(cell.loc.x * cell.cell_width - cell.cell_width/2 + ((math.mod(cell.loc.y,2)==0) and 50 or 0), cell.loc.y * cell.cell_height/2 - 50)
-      love.graphics.translate(cell.cell_width/2,0)
-      for i = 1, #cell.entities do
-        cell.entities[i]:draw()
-      end
-      love.graphics.pop()
     end
   end
   love.graphics.pop()
